@@ -1,29 +1,29 @@
-# Generic systemd Daemon Runner – README
+# Generic systemd Daemon Runner - README
 
 A reusable C template for turning any application into a well-behaved daemon.  
 Supports standalone (SysV‑style) operation as well as modern **systemd** integration with optional readiness notification.
 
 ## Features
 
-- **Clean CLI** – `--run`, `--start`, `--stop`, `--restart`, `--help`  
-- **Foreground mode** (`--run`) – perfect for `systemd`’s `Type=simple` or `Type=notify`  
-- **Classic daemon mode** (`--start`) – double‑fork, PID file, works everywhere  
-- **Graceful shutdown** – `SIGTERM` / `SIGINT` trigger your `app_shutdown()`  
-- **Fatal signal trapping** – `SIGSEGV`, `SIGFPE`, etc. logged before exit  
-- **Optional `sd_notify`** – tell systemd exactly when your service is ready  
+- **Clean CLI** - `--run`, `--start`, `--stop`, `--restart`, `--help`  
+- **Foreground mode** (`--run`) - perfect for `systemd`’s `Type=simple` or `Type=notify`  
+- **Classic daemon mode** (`--start`) - double‑fork, PID file, works everywhere  
+- **Graceful shutdown** - `SIGTERM` / `SIGINT` trigger your `app_shutdown()`  
+- **Fatal signal trapping** - `SIGSEGV`, `SIGFPE`, etc. logged before exit  
+- **Optional `sd_notify`** - tell systemd exactly when your service is ready  
 
 ## Requirements
 
 - A C compiler (GCC or Clang)  
-- `make` (optional – you can compile directly)  
+- `make` (optional - you can compile directly)  
 - `libsystemd` (only if `USE_SYSTEMD_NOTIFY=1` and you want `Type=notify`)  
 
 ## Quick Start
 
 1. **Clone / copy the files**  
-   - `daemon_template.h` – macros and your application interface  
-   - `daemon_template.c` – the reusable daemon engine  
-   - `myapp.c` – your business logic (example provided)
+   - `daemon_template.h` - macros and your application interface  
+   - `daemon_template.c` - the reusable daemon engine  
+   - `myapp.c` - your business logic (example provided)
 
 2. **Write your application logic**  
    Implement the two required functions in your own `.c` file:
@@ -38,7 +38,7 @@ Supports standalone (SysV‑style) operation as well as modern **systemd** integ
    }
 
    void app_shutdown(void *ctx) {
-       // Cleanup all resources – join threads, close files, …
+       // Cleanup all resources - join threads, close files, …
    }
    ```
 
@@ -132,22 +132,22 @@ This gives systemd exact startup/shutdown visibility and allows watchdog monitor
 
 ## How It Works
 
-- **`--run`** – Calls `app_main()`, then enters a main loop waiting for `SIGTERM`/`SIGINT`.  
+- **`--run`** - Calls `app_main()`, then enters a main loop waiting for `SIGTERM`/`SIGINT`.  
   After the loop, `app_shutdown()` runs. Perfect for systemd or debugging.
 
-- **`--start`** – Forks a child, daemonises it, writes a PID file, and runs the same logic.
+- **`--start`** - Forks a child, daemonises it, writes a PID file, and runs the same logic.
 
-- **`--stop`** – Reads the PID file, sends `SIGTERM`, waits for the process to die, and removes the PID.
+- **`--stop`** - Reads the PID file, sends `SIGTERM`, waits for the process to die, and removes the PID.
 
-- **`--restart`** – Combines `--stop` + `--start`.
+- **`--restart`** - Combines `--stop` + `--start`.
 
-- **`--help`** – Prints usage.
+- **`--help`** - Prints usage.
 
 ### Signal Handling
 
-- `SIGTERM` / `SIGINT` – sets a global flag `g_running = 0`, the main loop exits gracefully.
-- `SIGFPE`, `SIGSEGV`, `SIGILL`, `SIGBUS` – logs a message and exits immediately (no core dump in production).
-- `SIGHUP` – ignored (can be overridden for reload).
+- `SIGTERM` / `SIGINT` - sets a global flag `g_running = 0`, the main loop exits gracefully.
+- `SIGFPE`, `SIGSEGV`, `SIGILL`, `SIGBUS` - logs a message and exits immediately (no core dump in production).
+- `SIGHUP` - ignored (can be overridden for reload).
 
 ## Customising the Template
 
@@ -164,13 +164,13 @@ You can change them directly in the header or via `-D` flags when compiling.
 
 ## Troubleshooting
 
-- **“Daemon failed to start”** – Check permissions for the PID file path; run with `sudo` if needed.  
-- **PID file left behind** – The daemon removes it on clean shutdown. If it crashes unexpectedly, `--stop` detects the stale PID and removes it.  
-- **`sig_atomic_t` undefined** – Very old libc. Change the line `volatile sig_atomic_t g_running;` to `volatile int g_running;` in `daemon_template.c`.  
-- **`sd_notify` not found** – Install `libsystemd-dev` (or `systemd-devel`) and link with `-lsystemd`.  
+- **“Daemon failed to start”** - Check permissions for the PID file path; run with `sudo` if needed.  
+- **PID file left behind** - The daemon removes it on clean shutdown. If it crashes unexpectedly, `--stop` detects the stale PID and removes it.  
+- **`sig_atomic_t` undefined** - Very old libc. Change the line `volatile sig_atomic_t g_running;` to `volatile int g_running;` in `daemon_template.c`.  
+- **`sd_notify` not found** - Install `libsystemd-dev` (or `systemd-devel`) and link with `-lsystemd`.  
 
 ## Example Application
 
-`myapp.c` contains a minimal skeleton. Replace it with your own logic – the daemon code is completely independent.
+`myapp.c` contains a minimal skeleton. Replace it with your own logic - the daemon code is completely independent.
 
 ---

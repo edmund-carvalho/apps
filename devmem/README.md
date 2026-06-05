@@ -1,7 +1,7 @@
 
 ---
 
-# Devmem Access Utility
+# Devmem Access Utility App
 
 A lightweight, user-friendly C library designed to simplify hardware register access from user-space via `/dev/mem`. It provides both simple, one-shot functions and a high-performance, session-based API for handling continuous register operations across multiple applications.
 

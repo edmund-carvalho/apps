@@ -1,4 +1,4 @@
-# Generic POSIX Timer Library for Linux Applications
+# Generic POSIX Timer App for Linux Applications
 
 A lightweight, thread-safe, and highly efficient POSIX-timer-based wrapper for Linux applications. This library abstracts the complexities of POSIX timers, provides an asynchronous-signal-safe implementation, and exposes a clean, user-friendly API with millisecond precision and custom context injection (`user_data`).
 
