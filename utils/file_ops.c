@@ -21,26 +21,22 @@
  */
 
 /**
- * @file file_ops.h
+ * @file file_ops.c
  * @brief Simple, safe helpers for reading/writing single‑value files.
  *
- * All functions are static inline so they can be used in multiple
- * translation units without linker conflicts.
  */
-
-#ifndef FILE_OPS_H_
-#define FILE_OPS_H_
 
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <unistd.h>   /* access() */
 
 
 /* -------------------------------------------------------------------------
  *  Internal helper – forward declared so the public functions can use it.
  * ------------------------------------------------------------------------- */
-static inline FILE *file_fopen(const char *fname, const char *perms);
+FILE *file_fopen(const char *fname, const char *perms);
 
 /* -------------------------------------------------------------------------
  *  Public API
@@ -61,7 +57,7 @@ static inline FILE *file_fopen(const char *fname, const char *perms);
  *         -2 : cannot open file,
  *         -3 : no integer found or extra data present.
  */
-static inline int file_read_int(const char *file_path, int *var)
+int file_read_int(const char *file_path, int *var)
 {
     if (var == NULL) {
         fprintf(stderr, "ERROR: NULL pointer passed to file_read_int\n");
@@ -107,7 +103,7 @@ static inline int file_read_int(const char *file_path, int *var)
  *
  * @return 0 on success, -1 on failure.
  */
-static inline int file_write_int(const char *file_path, int var)
+int file_write_int(const char *file_path, int var)
 {
     FILE *fp = file_fopen(file_path, "w");
     if (fp == NULL) {
@@ -140,7 +136,7 @@ static inline int file_write_int(const char *file_path, int var)
  *         -2 : cannot open file,
  *         -3 : no valid float found or extra data present.
  */
-static inline int file_read_float(const char *file_path, float *var)
+int file_read_float(const char *file_path, float *var)
 {
     if (var == NULL) {
         fprintf(stderr, "ERROR: NULL pointer passed to file_read_float\n");
@@ -186,7 +182,7 @@ static inline int file_read_float(const char *file_path, float *var)
  *
  * @return 0 on success, -1 on failure.
  */
-static inline int file_write_float(const char *file_path, float var)
+int file_write_float(const char *file_path, float var)
 {
     FILE *fp = file_fopen(file_path, "w");
     if (fp == NULL) {
@@ -212,7 +208,7 @@ static inline int file_write_float(const char *file_path, float var)
  *
  * @return `true` if @p str ends with @p suffix, `false` otherwise.
  */
-static inline bool file_str_endswith(const char *str, const char *suffix)
+bool file_str_endswith(const char *str, const char *suffix)
 {
     size_t len_str = strlen(str);
     size_t len_suf = strlen(suffix);
@@ -230,7 +226,7 @@ static inline bool file_str_endswith(const char *str, const char *suffix)
  *
  * @return `true` if the path exists, `false` otherwise.
  */
-static inline bool file_exists(const char *fname)
+bool file_exists(const char *fname)
 {
     return (access(fname, F_OK) == 0);
 }
@@ -254,7 +250,7 @@ static inline bool file_exists(const char *fname)
  *
  * @return File pointer on success, `NULL` on failure.
  */
-static inline FILE *file_fopen(const char *fname, const char *perms)
+FILE *file_fopen(const char *fname, const char *perms)
 {
     /* Modes that require the file to exist */
     if (perms[0] == 'r') {
@@ -273,4 +269,51 @@ static inline FILE *file_fopen(const char *fname, const char *perms)
     return fp;
 }
 
-#endif /* FILE_OPS_H_ */
+
+/**
+ * @brief  Count the number of lines in an already opened text file.
+ *
+ * The file position is **reset to the beginning** before counting starts,
+ * and **left at the beginning** when the function returns.
+ *
+ * The algorithm counts every newline (`\n`) as one line.  If the file
+ * is not empty and the last character is **not** a newline, the final
+ * line is also counted (so a file containing `"hello"` has 1 line, and
+ * `"hello\nworld\n"` has 2 lines).  An empty file returns 0.
+ *
+ * @param[in] fp  Pointer to a file opened in text mode (e.g., `"r"`).
+ *
+ * @return  Line count (≥ 0) on success; **-1** if the file pointer is
+ *          `NULL` or a read error occurs.
+ */
+int file_get_line_count(FILE *fp)
+{
+    if (fp == NULL) {
+        fprintf(stderr, "ERROR: NULL file pointer in file_get_line_count\n");
+        return -1;
+    }
+
+    rewind(fp);   /* Reset to start; also clears EOF indicator */
+
+    int ch;
+    unsigned int lines = 0;
+    int last_char = EOF;   /* Remember previous character to handle empty files */
+
+    while ((ch = fgetc(fp)) != EOF) {
+        if (ch == '\n') {
+            lines++;
+        }
+        last_char = ch;
+    }
+
+    /* If the file is non‑empty and does not end with a newline,
+     * the last line hasn't been counted yet. */
+    if (last_char != EOF && last_char != '\n') {
+        lines++;
+    }
+
+    /* Restore the file position to the beginning */
+    rewind(fp);
+
+    return (int)lines;   /* unsigned → signed, safe because line count fits */
+}
