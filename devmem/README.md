@@ -31,8 +31,8 @@ The Persistent API maps the entire peripheral page block *once* during applicati
 
 Add the following files into your existing C project source tree:
 
-* `devmem.h` — External interface and data structures.
-* `devmem.c` — Implementation logic.
+* `devmem.h` - External interface and data structures.
+* `devmem.c` - Implementation logic.
 
 ### 2. Header Inclusion
 
