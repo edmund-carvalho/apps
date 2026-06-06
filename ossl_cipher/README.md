@@ -129,6 +129,16 @@ Example:
 The header also exposes a generic streaming `CipherCtx` API for more control (multiple updates, incremental processing).  
 See the `cipher_ctx_*` functions in `cryptogen.h`. The convenience functions are built on top of it.
 
+
+## Quick Reference Table
+| Mode | Key | IV  | AAD | Tag | Padding |
+|------|-----|-----|-----|-----|---------|
+| CBC | ✅ (16/24/32 bytes)                 | ✅ (16 bytes)                    | ❌                  | ❌                                      | ✅ (0 = off, 1 = PKCS#7) |
+| CTR | ✅ (16/24/32 bytes)                 | ✅ (16 bytes)                    | ❌                  | ❌                                      | not applicable            |
+| GCM | ✅ (16/24/32 bytes)                 | ✅ (typical 12 bytes, variable)  | ✅ (can be empty)   | ✅ (encrypt returns, decrypt verifies)  | not applicable            |
+| XTS | ✅ (double‑length: 32 or 64 bytes)  | ✅ (16 bytes)                    | ❌                  | ❌                                      | not applicable            |
+
+
 ## License
 
 This code is provided as-is, free for any use. No warranty.
