@@ -133,10 +133,10 @@ See the `cipher_ctx_*` functions in `cryptogen.h`. The convenience functions are
 ## Quick Reference Table
 | Mode | Key | IV  | AAD | Tag | Padding |
 |------|-----|-----|-----|-----|---------|
-| CBC | ✅ (16/24/32 bytes)                 | ✅ (16 bytes)                    | ❌                  | ❌                                      | ✅ (0 = off, 1 = PKCS#7) |
-| CTR | ✅ (16/24/32 bytes)                 | ✅ (16 bytes)                    | ❌                  | ❌                                      | not applicable            |
-| GCM | ✅ (16/24/32 bytes)                 | ✅ (typical 12 bytes, variable)  | ✅ (can be empty)   | ✅ (encrypt returns, decrypt verifies)  | not applicable            |
-| XTS | ✅ (double‑length: 32 or 64 bytes)  | ✅ (16 bytes)                    | ❌                  | ❌                                      | not applicable            |
+| CBC | ✅ (16/24/32 bytes) | ✅ (16 bytes) | ❌ | ❌ | ✅ (0 = off, 1 = PKCS#7) |
+| CTR | ✅ (16/24/32 bytes) | ✅ (16 bytes) | ❌ | ❌ | N/A |
+| GCM | ✅ (16/24/32 bytes) | ✅ (typical 12 bytes, variable)  | ✅ (can be empty) | ✅ (encrypt returns, decrypt verifies) | N/A            |
+| XTS | ✅ (double‑length: 32 or 64 bytes) | ✅ (16 bytes) | ❌ | ❌ | N/A            |
 
 
 ## License
